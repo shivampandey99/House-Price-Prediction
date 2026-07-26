@@ -1,172 +1,420 @@
-# House Price Prediction Using Linear Regression
+# House Price Prediction
+
+A Machine Learning project that predicts house prices using **Linear Regression** on the **USA Housing Dataset**. The project covers the complete machine learning workflow, including data preprocessing, exploratory data analysis, feature engineering, model training, evaluation, and deployment using **Streamlit**.
+
+---
 
 ## Project Overview
 
-This project builds a Machine Learning model to predict house prices using area-level economic and housing features from the USA Housing Dataset.
+The objective of this project is to build a machine learning regression model that can estimate house prices based on different housing and demographic characteristics.
 
-A Linear Regression model is trained and evaluated using R², MAE, and RMSE. The project also compares prediction performance across Low, Medium, and High population areas.
+The project follows a complete machine learning pipeline:
 
+1. Data loading
+2. Data exploration
+3. Data cleaning
+4. Exploratory Data Analysis (EDA)
+5. Feature engineering
+6. Feature and target selection
+7. Train-test splitting
+8. Feature scaling
+9. Linear Regression model training
+10. Model evaluation
+11. Population-category performance analysis
+12. Model serialization
+13. Streamlit web application development
+14. Deployment
 
-## Problem Statement
-
-A real-estate platform wants to provide sellers with an instant, data-driven price estimate for a house based on area-level economic and housing indicators.
-
-
-## Business Objective
-
-The objective of this project is to build a Linear Regression model that can predict house prices accurately and consistently, helping a real-estate platform provide data-driven price estimates instead of relying only on manual valuation.
-
+---
 
 ## Dataset
 
-**Dataset Name:** USA Housing Dataset  
-**Source:** Kaggle  
-**Dataset Author:** vedavyasv  
-**Dataset Link:** https://www.kaggle.com/datasets/vedavyasv/usa-housing
-The dataset contains the following main features:
+The project uses the **USA Housing Dataset**.
 
-- Avg. Area Income
-- Avg. Area House Age
-- Avg. Area Number of Rooms
-- Avg. Area Number of Bedrooms
-- Area Population
-- Price
-- Address
+The original dataset contains the following main numerical features:
 
+| Feature | Description |
+|---|---|
+| Average Area Income | Average income of people living in the area |
+| Average Area House Age | Average age of houses in the area |
+| Average Area Number of Rooms | Average number of rooms in houses in the area |
+| Average Area Number of Bedrooms | Average number of bedrooms in houses in the area |
+| Area Population | Population of the area |
+| Price | House price and target variable |
 
-## Technologies and Libraries Used
+The dataset is stored inside:
 
-- Python
-- Jupyter Notebook
-- pandas
-- numpy
-- matplotlib
-- seaborn
-- scikit-learn
+```text
+Dataset/USA_Housing.csv
+```
 
+---
 
-## Project Workflow
+## Data Preprocessing
 
-1. Data Loading and Understanding
-2. Data Cleaning
-3. Exploratory Data Analysis (EDA)
-4. Feature Engineering
-5. Train-Test Split
-6. Feature Scaling
-7. Linear Regression Model Training
-8. Model Prediction
-9. Model Evaluation
-10. Population Category Performance Comparison
+Before training the model, the dataset was inspected and prepared for machine learning.
 
+The preprocessing workflow includes:
 
-## Data Cleaning
+- Inspecting dataset dimensions
+- Checking column information
+- Checking descriptive statistics
+- Checking for missing values
+- Checking for duplicate records
+- Removing unnecessary non-predictive information
+- Separating features and the target variable
+- Splitting data into training and testing sets
+- Scaling input features
 
-The following data cleaning steps were performed:
-
-- Checked for missing values.
-- Checked for duplicate records.
-- Removed the free-text `Address` column.
-- Renamed columns for easier coding.
-- Checked for invalid Price and Population values.
-
-No missing values, duplicate records, or invalid Price/Population values were found.
-
+---
 
 ## Exploratory Data Analysis
 
-### Price Distribution
+Exploratory Data Analysis was performed to understand the structure of the dataset and relationships between different variables.
 
-The Price distribution was approximately symmetric, with a skewness value of approximately **-0.003**. Therefore, a log transformation of Price was not required.
+### House Price Distribution
 
-![Price Distribution](Images/price_distribution.png)
+The distribution of house prices was analyzed using a histogram and density curve.
 
-### Correlation Analysis
+![House Price Distribution](Images/price_distribution.png)
 
-A correlation heatmap was used to examine the relationships among the numerical features and house Price.
+### Correlation Heatmap
+
+A correlation heatmap was created to analyze relationships between numerical features and house prices.
 
 ![Correlation Heatmap](Images/correlation_heatmap.png)
 
+The heatmap shows that **Average Area Income** has one of the strongest positive relationships with house price among the available features.
+
+---
 
 ## Feature Engineering
 
-A new feature called `rooms_per_bedroom` was created using the average number of rooms and bedrooms.
+An additional feature was created:
 
-Area Population was also divided into three approximately equal categories:
+### Rooms per Bedroom
 
-- Low Population
-- Medium Population
-- High Population
+```text
+rooms_per_bedroom = average number of rooms / average number of bedrooms
+```
 
-These categories were used to compare model prediction performance across different population-density groups.
+This feature represents the relationship between the number of rooms and bedrooms in a property.
 
+After feature engineering, the model uses **6 input features**:
 
-## Model Building
+1. Average Area Income
+2. Average Area House Age
+3. Average Area Number of Rooms
+4. Average Area Number of Bedrooms
+5. Area Population
+6. Rooms per Bedroom
 
-The numerical features were separated from the target variable (`Price`).
+The Streamlit application asks the user for the five original values and calculates the engineered **Rooms per Bedroom** feature internally.
 
-The dataset was divided into:
+---
 
-- **80% Training Data**
-- **20% Testing Data**
+## Machine Learning Model
 
-The input features were standardized using `StandardScaler`, and a Linear Regression model was trained on the training data.
+The machine learning algorithm used in this project is:
 
+### Linear Regression
+
+Linear Regression was selected because the target variable, **house price**, is continuous and the dataset shows meaningful relationships between the input features and target variable.
+
+The model attempts to represent house price as a linear combination of the input features.
+
+---
+
+## Train-Test Split
+
+The dataset was divided into separate training and testing sets.
+
+The training data is used to train the Linear Regression model, while the testing data is kept separate and used to evaluate how well the trained model performs on unseen data.
+
+This provides a more reliable estimate of model performance than evaluating the model only on the data used during training.
+
+---
+
+## Feature Scaling
+
+Feature scaling was applied using **StandardScaler** from Scikit-learn.
+
+The scaler is fitted using the training data and then used to transform the training, testing, and user-input data.
+
+The trained scaler is saved as:
+
+```text
+Model/scaler.pkl
+```
+
+Using the same saved scaler during prediction ensures that new user inputs are transformed in the same way as the data used during model training.
+
+---
 
 ## Model Evaluation
 
-The final Linear Regression model achieved the following performance on the test data:
+The model was evaluated using common regression metrics:
 
-| Metric | Result |
-|---|---:|
-| R² Score | 0.918 |
-| MAE | 80,881.07 |
-| RMSE | 100,448.49 |
+- **MAE — Mean Absolute Error**
+- **MSE — Mean Squared Error**
+- **RMSE — Root Mean Squared Error**
+- **R² Score — Coefficient of Determination**
 
-The R² score indicates that the model explains approximately **91.8% of the variation in house prices** in the test data.
+The model achieved an **R² score of approximately 0.918**.
 
-### Actual vs Predicted Prices
+This indicates that the model explains approximately **91.8% of the variation in house prices** in the test data.
 
-The following plot compares the actual house prices with the prices predicted by the model.
+---
+
+## Actual vs Predicted Prices
+
+The following graph compares the actual house prices with the prices predicted by the model.
 
 ![Actual vs Predicted Prices](Images/actual_vs_predicted.png)
 
+Most observations are located relatively close to the reference line, showing that the model's predicted prices generally follow the actual prices.
 
-## Population Category Performance Comparison
+---
 
-To evaluate whether the model performs consistently across different types of areas, the test predictions were grouped into Low, Medium, and High population categories.
+## Population Category Analysis
 
-| Population Category | Test Records | MAE |
-|---|---:|---:|
-| Low | 323 | 80,626.65 |
-| Medium | 338 | 80,982.43 |
-| High | 339 | 81,022.41 |
+To analyze whether model performance changes across areas with different population levels, population values were divided into three categories:
+
+- Low
+- Medium
+- High
+
+The Mean Absolute Error was then calculated separately for each category.
 
 ![MAE Across Population Categories](Images/population_category_mae.png)
 
-The MAE values are very similar across all three population categories. This indicates that the model performs consistently across Low, Medium, and High population areas.
+The observed MAE values were approximately:
 
+| Population Category | MAE |
+|---|---:|
+| Low | 80,626.65 |
+| Medium | 80,982.43 |
+| High | 81,022.41 |
+
+The errors are very similar across the three categories, suggesting that the model performs relatively consistently across different population groups.
+
+---
+
+## Streamlit Web Application
+
+A simple interactive web application was developed using **Streamlit**.
+
+The application allows users to enter property and area information and receive an estimated house price from the trained machine learning model.
+
+### User Inputs
+
+The application accepts:
+
+- Average Area Income
+- Average Area House Age
+- Average Area Number of Rooms
+- Average Area Number of Bedrooms
+- Area Population
+
+The application automatically calculates the engineered **Rooms per Bedroom** feature before passing the data to the model.
+
+### Application Output
+
+The application displays:
+
+- Estimated House Price
+- Population Category
+
+The interface also performs input validation to prevent invalid or unrealistic values from being submitted to the model.
+
+---
+
+## Project Structure
+
+```text
+House-Price-Prediction/
+│
+├── Dataset/
+│   └── USA_Housing.csv
+│
+├── Images/
+│   ├── actual_vs_predicted.png
+│   ├── correlation_heatmap.png
+│   ├── population_category_mae.png
+│   └── price_distribution.png
+│
+├── Model/
+│   ├── linear_regression_model.pkl
+│   └── scaler.pkl
+│
+├── Notebook/
+│   └── House_Price_Prediction.ipynb
+│
+├── app.py
+├── train_model.py
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## File Description
+
+### `Notebook/House_Price_Prediction.ipynb`
+
+Contains the complete machine learning workflow, including:
+
+- Data loading
+- Data preprocessing
+- Exploratory Data Analysis
+- Feature engineering
+- Model training
+- Model evaluation
+- Visualizations
+- Population-category analysis
+
+### `train_model.py`
+
+Trains the machine learning model and saves the trained model and scaler for use by the Streamlit application.
+
+### `app.py`
+
+Contains the Streamlit web application. It:
+
+- Loads the trained model
+- Loads the saved scaler
+- Accepts user input
+- Validates input values
+- Creates the engineered feature
+- Scales input data
+- Generates the house price prediction
+- Displays the prediction result
+
+### `requirements.txt`
+
+Contains the Python dependencies required to run and deploy the project.
+
+### `Model/`
+
+Contains the serialized machine learning components:
+
+```text
+linear_regression_model.pkl
+scaler.pkl
+```
+
+---
+
+## Technologies Used
+
+The project was developed using:
+
+- Python
+- Pandas
+- NumPy
+- Matplotlib
+- Seaborn
+- Scikit-learn
+- Joblib
+- Streamlit
+- Jupyter Notebook
+- Git
+- GitHub
+
+---
+
+## How to Run the Project Locally
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/shivampandey99/House-Price-Prediction.git
+```
+
+### 2. Navigate to the project directory
+
+```bash
+cd House-Price-Prediction
+```
+
+### 3. Install the required dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Train the model (optional)
+
+The trained model files are already included in the project. To retrain and regenerate them, run:
+
+```bash
+python train_model.py
+```
+
+This generates the model files inside the `Model` directory.
+
+### 5. Run the Streamlit application
+
+```bash
+streamlit run app.py
+```
+
+The Streamlit application will start and open in your web browser.
+
+---
+
+## Prediction Workflow
+
+The deployed application follows this prediction pipeline:
+
+```text
+User Input
+    ↓
+Input Validation
+    ↓
+Feature Engineering
+(Rooms per Bedroom)
+    ↓
+Feature Scaling
+(StandardScaler)
+    ↓
+Trained Linear Regression Model
+    ↓
+House Price Prediction
+    ↓
+Display Prediction and Population Category
+```
+
+---
+
+## Key Findings
+
+Some important observations from the project are:
+
+- Average Area Income shows a strong positive relationship with house prices.
+- Average Area House Age also contributes to house price prediction.
+- Area Population has a noticeable positive relationship with house price.
+- The Linear Regression model achieves strong predictive performance with an R² score of approximately 0.918.
+- Prediction errors are very similar across Low, Medium, and High population categories.
+- The trained machine learning pipeline can be used interactively through the Streamlit application.
+
+---
 
 ## Conclusion
 
-The Linear Regression model performed well on the USA Housing Dataset, achieving an R² score of approximately **0.918**.
+This project demonstrates an end-to-end machine learning workflow for predicting house prices.
 
-The Actual vs Predicted analysis showed that most predictions were reasonably close to the actual house prices. The category-wise analysis also showed similar prediction errors across Low, Medium, and High population areas.
+Starting with the USA Housing dataset, the project performs data exploration, preprocessing, feature engineering, model training, evaluation, and additional population-based error analysis.
 
-Overall, the model provides a useful baseline for generating consistent, data-driven house price estimates using area-level economic and housing indicators.
+The Linear Regression model achieved an **R² score of approximately 0.918**, indicating strong predictive performance on the test data.
 
+Finally, the trained model was integrated into a **Streamlit web application**, allowing users to provide housing information and obtain house price predictions through a simple interactive interface.
 
-## Repository Structure
+---
 
-```text
-AIML-Project-RollNo-2302221530101/
-├── Dataset/
-│   └── USA_Housing.csv
-├── Notebook/
-│   └── House_Price_Prediction.ipynb
-├── Images/
-│   ├── price_distribution.png
-│   ├── correlation_heatmap.png
-│   ├── actual_vs_predicted.png
-│   └── population_category_mae.png
-└── README.md
-```
+## Author
+
+**Shivam Pandey**
+
+B.Tech — Computer Science & Engineering  
+Specialization: Artificial Intelligence & Machine Learning
