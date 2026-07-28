@@ -172,7 +172,6 @@ if st.button(
 
         input_scaled = scaler.transform(input_data)
 
-
         # ----------------------------------------------------
         # MODEL PREDICTION
         # ----------------------------------------------------
@@ -202,19 +201,19 @@ if st.button(
 
         st.header("Prediction Result")
 
-if prediction <= 0:
+        if prediction <= 0:
 
-    st.warning(
-        "The entered values are outside the model's reliable prediction range. "
-        "Please enter more realistic property values."
-    )
+            st.warning(
+                "The entered values are outside the model's reliable prediction range. "
+                "Please enter more realistic property values."
+            )
 
-else:
+        else:
 
-    st.success(
-        f"Estimated House Price: ${prediction:,.2f}"
-    )
+            st.success(
+                f"Estimated House Price: ${prediction:,.2f}"
+            )
 
-    st.info(
-        f"Population Category: {population_category}"
-    )   
+            st.info(
+                f"Population Category: {population_category}"
+            )
