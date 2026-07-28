@@ -202,10 +202,19 @@ if st.button(
 
         st.header("Prediction Result")
 
-        st.success(
-            f"Estimated House Price: ${prediction:,.2f}"
-        )
+if prediction <= 0:
 
-        st.info(
-            f"Population Category: {population_category}"
-        )
+    st.warning(
+        "The entered values are outside the model's reliable prediction range. "
+        "Please enter more realistic property values."
+    )
+
+else:
+
+    st.success(
+        f"Estimated House Price: ${prediction:,.2f}"
+    )
+
+    st.info(
+        f"Population Category: {population_category}"
+    )   
